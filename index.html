@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voxel Typography & Living Magazine Showcase | PATICCA MATRIX OS</title>
+  <!-- Google Fonts: Kanit & Orbitron -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#080b10',
+            panel: '#0d1117',
+            bordercol: '#21262d',
+            dharma: {
+              gold: '#ffd700',
+              amber: '#f59e0b',
+              neon: '#06b6d4',
+              stardust: '#94a3b8'
+            }
+          },
+          fontFamily: {
+            sans: ['Kanit', 'sans-serif'],
+            mono: ['Orbitron', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #080b10;
+      color: #e6edf3;
+      overflow-x: hidden;
+    }
+    .grid-bg {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 215, 0, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 215, 0, 0.02) 1px, transparent 1px);
+    }
+    .metal-border {
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(255, 215, 0, 0.03);
+    }
+    .neon-gold {
+      text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+    }
+    .neon-cyan {
+      text-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #080b10;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #21262d;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ffd700;
+    }
+  </style>
+</head>
+<body class="grid-bg font-sans min-h-screen flex flex-col selection:bg-dharma-amber selection:text-black">
+
+  <!-- ZONE A: TOP SEED BAR / HEADER HUD -->
+  <header class="w-full bg-obsidian border-b border-bordercol px-4 py-3 sticky top-0 z-50 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-dharma-gold via-dharma-amber to-cyan-500 flex items-center justify-center text-black font-extrabold text-lg shadow-lg shadow-dharma-amber/20 font-mono">
+        VX
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="font-mono text-xs text-dharma-gold tracking-widest uppercase">PATICCA MATRIX OS // SHOWCASE V2.0</span>
+          <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+        </div>
+        <h1 class="text-base md:text-lg font-extrabold text-white tracking-wide">
+          Voxel Typography & Living Magazine <span class="text-dharma-gold font-normal">| Showcase Engine</span>
+        </h1>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <div class="hidden sm:flex flex-col text-right">
+        <span class="text-[10px] text-gray-500 uppercase font-mono">CHIEF ARCHITECT</span>
+        <span class="text-xs font-bold text-dharma-cyan neon-cyan">ช่างเบิร์ดโคตรเฟี้ยว ⚙️</span>
+      </div>
+      <div class="px-3 py-1 bg-panel border border-bordercol rounded-md font-mono text-xs text-gray-300">
+        NODES: <span id="nodeCountLbl" class="text-dharma-gold font-bold">1,200</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN SHOWCASE CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+    <!-- ZONE B: THE LIVING STAGE (3D CANVAS - 8 COLS) -->
+    <div class="lg:col-span-8 flex flex-col gap-4">
+      
+      <!-- Viewport Card -->
+      <div class="relative bg-panel metal-border rounded-xl overflow-hidden flex flex-col h-[460px] md:h-[560px]">
+        
+        <!-- Viewport Top HUD Overlay -->
+        <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
+          <div class="bg-obsidian/80 backdrop-blur-md px-3 py-1.5 rounded-md border border-bordercol text-xs font-mono text-gray-300 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-dharma-gold" id="stageIndicatorDot"></span>
+            <span>STAGE: <strong id="stageTitleLbl" class="text-dharma-gold">1. DUST CLOUD (ความว่างเปล่า)</strong></span>
+          </div>
+          <div class="bg-obsidian/80 backdrop-blur-md px-3 py-1.5 rounded-md border border-bordercol text-[11px] font-mono text-gray-400 hidden sm:block">
+            ลากเมาส์หมุนมุมมอง 360°
+          </div>
+        </div>
+
+        <!-- 3D Canvas -->
+        <canvas id="showcaseCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+
+        <!-- ZONE D: THE ARCHITECT's PEDAL (Control Toolbar) -->
+        <div class="absolute bottom-3 left-3 right-3 bg-obsidian/90 backdrop-blur-md p-3 rounded-lg border border-bordercol flex flex-wrap items-center justify-between gap-3 z-10">
+          <div class="grid grid-cols-3 w-full gap-2">
+            <button onclick="setMorphStage(0)" id="stageBtn0" class="stage-btn py-2 px-2 text-xs rounded-md font-bold bg-dharma-gold text-black transition shadow-md flex items-center justify-center gap-1">
+              <span>1. ฝุ่นโกลาหล (Dust)</span>
+            </button>
+            <button onclick="setMorphStage(1)" id="stageBtn1" class="stage-btn py-2 px-2 text-xs rounded-md font-semibold bg-panel hover:bg-bordercol text-gray-300 border border-bordercol transition flex items-center justify-center gap-1">
+              <span>2. ตัวอักษร (Typography)</span>
+            </button>
+            <button onclick="setMorphStage(2)" id="stageBtn2" class="stage-btn py-2 px-2 text-xs rounded-md font-semibold bg-panel hover:bg-bordercol text-gray-300 border border-bordercol transition flex items-center justify-center gap-1">
+              <span>3. นิตยสาร (Living Magazine)</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ZONE C: THE STORY SLATE (4 COLS) -->
+    <div class="lg:col-span-4 flex flex-col gap-4">
+      
+      <div class="bg-panel metal-border rounded-xl p-5 flex flex-col justify-between h-full">
+        
+        <div>
+          <!-- Slate Header -->
+          <div class="border-b border-bordercol pb-3 mb-4">
+            <span class="text-[10px] font-mono text-dharma-gold uppercase tracking-wider block mb-1">ARCHITECTURAL DEEP DIVE</span>
+            <h2 class="text-lg font-extrabold text-white">
+              ปรัชญา & กลไกการแปลงร่าง
+            </h2>
+          </div>
+
+          <!-- Dynamic Description Box -->
+          <div id="storySlateContent" class="space-y-4 text-xs md:text-sm text-gray-300 leading-relaxed">
+            <div class="bg-obsidian p-3.5 rounded-lg border border-bordercol">
+              <strong class="text-dharma-gold block mb-1 text-sm font-bold">1. ปฐมบทแห่งอนุภาค (Primordial Dust)</strong>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                ทุกสิ่งเริ่มต้นจากความว่างเปล่า ละออง Voxel เปรียบเสมือนพลังงานดิบที่ล่องลอยอิสระ ไม่มีรูปทรง ไม่มีความยึดติด เปรียบดั่งธาตุแท้ที่ยังไม่ถูกปรุงแต่งตามกฎอนัตตา
+              </p>
+            </div>
+
+            <div class="bg-obsidian p-3.5 rounded-lg border border-bordercol">
+              <strong class="text-cyan-400 block mb-1 text-sm font-bold">2. แรงดึงดูดแห่งสติ (Typography Formation)</strong>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                เมื่อมีคำสั่ง ความหมายจะทำหน้าที่เป็นสนามแม่เหล็กดึงดูดก้อน Voxel ให้พุ่งเข้ามาจัดเรียงตัวเป็น <strong>ตัวอักษร 3 มิติ (3D Glyph)</strong> ที่มีมิติความหนาและน้ำหนักอย่างแม่นยำ
+              </p>
+            </div>
+
+            <div class="bg-obsidian p-3.5 rounded-lg border border-bordercol">
+              <strong class="text-green-400 block mb-1 text-sm font-bold">3. การคลี่ตัวเป็นนิตยสารมีชีวิต (Living Magazine)</strong>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                ตัวหนังสือไม่ได้หยุดนิ่ง แต่แตกตัวออกไปเป็นขอบคอลัมน์ กรอบเนื้อหา A4 และโครงสร้างเรขาคณิต พร้อมจังหวะการหายใจ (Breathing Respiration) สื่อถึงความไม่เที่ยงและพร้อมปรับเปลี่ยนได้ตลอดเวลา
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Metric Bar -->
+        <div class="pt-4 border-t border-bordercol mt-4 flex items-center justify-between text-[11px] font-mono text-gray-500">
+          <div>ENGINE: <span class="text-dharma-gold">VOXEL-MORPH 3D</span></div>
+          <div>STATUS: <span class="text-green-400">ACTIVE</span></div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- 3D SHOWCASE ENGINE SCRIPT -->
+  <script>
+    const canvas = document.getElementById('showcaseCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+
+    let currentStage = 0; // 0: Dust, 1: Typography ("SATI"), 2: Living Magazine Layout
+    let angleX = 0.3;
+    let angleY = -0.5;
+    let isDragging = false;
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+
+    let particles = [];
+    const TOTAL_PARTICLES = 1400;
+
+    // Initialize Particle Database with 3 target states
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < TOTAL_PARTICLES; i++) {
+        // Stage 0: Random Dust Cloud coordinates
+        const dustX = (Math.random() - 0.5) * 350;
+        const dustY = (Math.random() - 0.5) * 250;
+        const dustZ = (Math.random() - 0.5) * 350;
+
+        // Stage 1: Typography ("SATI") target coordinates (approximate 3D grid layout)
+        // We divide particles into 4 letter groups: S, A, T, I
+        let typoX, typoY, typoZ;
+        const group = i % 4;
+        const localIdx = Math.floor(i / 4);
+        
+        if (group === 0) { // 'S' letter shape
+          typoX = -110 + (localIdx % 10) * 3;
+          typoY = -60 + Math.floor(localIdx / 10) * 6;
+          typoZ = (Math.random() - 0.5) * 20;
+        } else if (group === 1) { // 'A' letter shape
+          typoX = -40 + (localIdx % 10) * 3;
+          typoY = -60 + Math.floor(localIdx / 10) * 6;
+          typoZ = (Math.random() - 0.5) * 20;
+        } else if (group === 2) { // 'T' letter shape
+          typoX = 30 + (localIdx % 10) * 3;
+          typoY = -60 + Math.floor(localIdx / 10) * 6;
+          typoZ = (Math.random() - 0.5) * 20;
+        } else { // 'I' letter shape
+          typoX = 100 + (localIdx % 6) * 3;
+          typoY = -60 + Math.floor(localIdx / 6) * 6;
+          typoZ = (Math.random() - 0.5) * 20;
+        }
+
+        // Stage 2: Living Magazine Layout (Header box, 2 columns, footer illustration)
+        let magX, magY, magZ;
+        if (i < 300) { // Top Header Banner
+          magX = -140 + (i % 60) * 4.8;
+          magY = -110;
+          magZ = 0;
+        } else if (i < 850) { // Left Column Content
+          magX = -130 + ((i - 300) % 35) * 3.5;
+          magY = -70 + Math.floor((i - 300) / 35) * 6;
+          magZ = 0;
+        } else if (i < 1350) { // Right Column Content
+          magX = 20 + ((i - 850) % 35) * 3.5;
+          magY = -70 + Math.floor((i - 850) / 35) * 6;
+          magZ = 0;
+        } else { // Bottom Graphic/Illustration block
+          magX = -80 + ((i - 1350) % 50) * 3.2;
+          magY = 80;
+          magZ = (Math.random() - 0.5) * 30;
+        }
+
+        particles.push({
+          x: dustX, y: dustY, z: dustZ, // current pos
+          dust: { x: dustX, y: dustY, z: dustZ },
+          typo: { x: typoX, y: typoY, z: typoZ },
+          mag: { x: magX, y: magY, z: magZ },
+          color: i < 300 ? '#ffd700' : (i < 850 ? '#06b6d4' : '#94a3b8'),
+          size: 3 + Math.random() * 2.5
+        });
+      }
+      document.getElementById('nodeCountLbl').innerText = TOTAL_PARTICLES.toLocaleString();
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      width = canvas.width;
+      height = canvas.height;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    // Render loop with lerp physics for smooth morphing
+    function render() {
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      // Auto rotate slightly when idle
+      if (!isDragging) {
+        angleY += 0.005;
+      }
+
+      const cosX = Math.cos(angleX);
+      const sinX = Math.sin(angleX);
+      const cosY = Math.cos(angleY);
+      const sinY = Math.sin(angleY);
+
+      // Update particle positions towards target stage with spring lerp
+      particles.forEach(p => {
+        let target = p.dust;
+        if (currentStage === 1) target = p.typo;
+        if (currentStage === 2) target = p.mag;
+
+        // Lerp towards target
+        p.x += (target.x - p.x) * 0.08;
+        p.y += (target.y - p.y) * 0.08;
+        p.z += (target.z - p.z) * 0.08;
+
+        // Add subtle breathing wave in stage 2
+        let breathY = p.y;
+        if (currentStage === 2) {
+          breathY += Math.sin(Date.now() * 0.003 + p.x * 0.05) * 1.5;
+        }
+
+        // Rotate Y
+        let x1 = p.x * cosY + p.z * sinY;
+        let z1 = -p.x * sinY + p.z * cosY;
+        // Rotate X
+        let y2 = breathY * cosX - z1 * sinX;
+        let z2 = breathY * sinX + z1 * cosX;
+
+        // Perspective Projection
+        const fov = 400;
+        const scale = fov / (fov + z2 + 250);
+        const px = cx + x1 * scale;
+        const py = cy + y2 * scale;
+        const pSize = Math.max(1.5, p.size * scale);
+
+        p._renderData = { px, py, pSize, depth: z2, color: p.color };
+      });
+
+      // Sort by depth
+      particles.sort((a, b) => b._renderData.depth - a._renderData.depth);
+
+      // Draw particles
+      particles.forEach(p => {
+        const rd = p._renderData;
+        ctx.fillStyle = rd.color;
+        ctx.beginPath();
+        ctx.roundRect(rd.px - rd.pSize / 2, rd.py - rd.pSize / 2, rd.pSize, rd.pSize, 1.5);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      });
+
+      requestAnimationFrame(render);
+    }
+
+    // Controls for 360 Rotation
+    canvas.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+    });
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      angleY += (e.clientX - lastMouseX) * 0.01;
+      angleX += (e.clientY - lastMouseY) * 0.01;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+    });
+
+    // Touch support for mobile
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        lastMouseX = e.touches[0].clientX;
+        lastMouseY = e.touches[0].clientY;
+      }
+    });
+    window.addEventListener('touchend', () => isDragging = false);
+    canvas.addEventListener('touchmove', (e) => {
+      if (!isDragging || e.touches.length !== 1) return;
+      angleY += (e.touches[0].clientX - lastMouseX) * 0.01;
+      angleX += (e.touches[0].clientY - lastMouseY) * 0.01;
+      lastMouseX = e.touches[0].clientX;
+      lastMouseY = e.touches[0].clientY;
+    });
+
+    // Switch Stages
+    function setMorphStage(stage) {
+      currentStage = stage;
+
+      const titles = [
+        "1. DUST CLOUD (ความว่างเปล่า)",
+        "2. 3D TYPOGRAPHY (อักษร 'SATI')",
+        "3. LIVING MAGAZINE (นิตยสารมีชีวิต)"
+      ];
+      document.getElementById('stageTitleLbl').innerText = titles[stage];
+
+      // Update button highlights
+      for (let i = 0; i <= 2; i++) {
+        const btn = document.getElementById(`stageBtn${i}`);
+        if (i === stage) {
+          btn.className = "stage-btn py-2 px-2 text-xs rounded-md font-bold bg-dharma-gold text-black transition shadow-md flex items-center justify-center gap-1";
+        } else {
+          btn.className = "stage-btn py-2 px-2 text-xs rounded-md font-semibold bg-panel hover:bg-bordercol text-gray-300 border border-bordercol transition flex items-center justify-center gap-1";
+        }
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      initParticles();
+      render();
+    });
+  </script>
+</body>
+</html>
